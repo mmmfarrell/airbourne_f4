@@ -32,6 +32,7 @@
 
 #include "system.h"
 #include "vcp.h"
+#include "led.h"
 
 VCP* uartPtr = NULL;
 
@@ -48,12 +49,16 @@ int main()
   VCP vcp;
   vcp.init();
   uartPtr = &vcp;
-  vcp.register_rx_callback(&rx_callback);
+//  vcp.register_rx_callback(&rx_callback);
+
+  LED led1;
+  led1.init(LED1_GPIO, LED1_PIN);
 
   while(1)
   {
     uint8_t hello_string[] = "waddup\n";
-    vcp.write(hello_string, 7);
+//    vcp.write(hello_string, 7);
     delay(200);
+    led1.toggle();
   }
 }

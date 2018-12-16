@@ -92,6 +92,8 @@ EXCLUDES = stm32f4xx_crc.c \
            stm32f4xx_qspi.c
 STDPERIPH_SRC := $(filter-out ${EXCLUDES}, $(STDPERIPH_SRC))
 
+$(info STDPERIPH_SRC = $(STDPERIPH_SRC))
+
 
 # Search path and source files for the USB libraries and ignore files we don't need
 VPATH		:= $(VPATH):$(USBCORE_DIR)/src:$(USBOTG_DIR)/src:$(USBCDC_DIR)/src
