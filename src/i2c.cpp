@@ -501,6 +501,10 @@ void I2C::handleTask()
     if (current_task_->data.cb)
       current_task_->data.cb(return_code_);
     start_next_task = true;
+    break;
+
+  default:
+    break;
   }
 
   if (task_complete)
@@ -601,7 +605,7 @@ void I2C::unstick()
   // clock out some bits
   for (int i = 0; i < 18; ++i)
   {
-    for (int i = 0; i < cyc; i++); // delay
+    for (int j = 0; j < cyc; j++); // delay
     scl_.toggle();
   }
   delayMicroseconds(1);
@@ -705,17 +709,17 @@ int8_t I2C::read(uint8_t addr, uint8_t reg, uint8_t *data, size_t len, void (*cb
 
 int8_t I2C::write(uint8_t addr, uint8_t reg, uint8_t data, void(*cb)(int8_t))
 {
-  write(addr, reg, &data, 1, cb);
+  return write(addr, reg, &data, 1, cb);
 }
 
 int8_t I2C::write(uint8_t addr, uint8_t* data, size_t len, void(*cb)(int8_t))
 {
-  write(addr, 0xFF, data, len, cb);
+  return write(addr, 0xFF, data, len, cb);
 }
 
 int8_t I2C::write(uint8_t addr, uint8_t data, void(*cb)(int8_t))
 {
-  write(addr, 0xFF, &data, 1, cb);
+  return write(addr, 0xFF, &data, 1, cb);
 }
 
 int8_t I2C::write(uint8_t addr, uint8_t reg, uint8_t *data, size_t len, void (*cb)(int8_t))

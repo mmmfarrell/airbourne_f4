@@ -125,8 +125,9 @@ static void f2a(float num, int decimals, char * bf)
     {
         mult *= 10;
     }
-    int i = (int)num;
-    int dec = (int)(num * mult) % mult;
+    //int i = (int)num;
+    int i = static_cast<int>(num);
+    int dec = static_cast<int>(num * mult) % mult;
     
     // write integer part
     i2a(i, bf);
@@ -138,9 +139,9 @@ static void f2a(float num, int decimals, char * bf)
     *bf++ = '.';
     
     // pad with zeros
-    for (int i = mult/10; i >= 1;  i /= 10)
+    for (int j = mult/10; j >= 1;  j /= 10)
     {
-        if ( dec < i)
+        if ( dec < j)
             *bf++ = '0';
         else
             break;
@@ -184,7 +185,7 @@ void tfp_format(void* putp, putcf putf, const char *fmt, va_list va)
                 lz=1;
             }
             if (ch>='0' && ch<='9') {
-                ch=a2i(ch, (char **)&fmt, 10, &w);
+                ch=a2i(ch, const_cast<char **>(&fmt), 10, &w);
             }
             if (ch=='l') {
                 ch=*(fmt++);
@@ -192,7 +193,7 @@ void tfp_format(void* putp, putcf putf, const char *fmt, va_list va)
             }
             if (ch=='.') {
                 ch = *(fmt++);
-                ch=a2i(ch, (char **)&fmt, 10, &f);
+                ch=a2i(ch, const_cast<char **>(&fmt), 10, &f);
             }
             switch (ch) {
             case 0:
@@ -226,7 +227,7 @@ void tfp_format(void* putp, putcf putf, const char *fmt, va_list va)
                 putchw(putp,putf,w,lz,bf);
                 break;
             case 'c' :
-                putf(putp,(char)(va_arg(va, int)));
+                putf(putp, static_cast<char>(va_arg(va, int)));
                 break;
             case 's' :
                 putchw(putp,putf,w,0,va_arg(va, char*));
@@ -258,7 +259,7 @@ void tfp_printf(const char *fmt, ...)
 
 static void putcp(void* p,char c)
 {
-    *(*((char**)p))++ = c;
+    *(*(static_cast<char**>(p)))++ = c;
 }
 
 void tfp_sprintf(char* s, const char *fmt, ...)

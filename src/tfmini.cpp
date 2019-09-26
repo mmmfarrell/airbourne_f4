@@ -70,7 +70,8 @@ void TFMini::reset()
 
 void TFMini::setParameter(uint16_t cmd, uint8_t val)
 {
-  uint8_t data[3] = {(uint8_t)(cmd >> 16), (uint8_t)(cmd & 0xFF), 0x01};
+  uint8_t data[3] = {static_cast<uint8_t>(cmd >> 16),
+                     static_cast<uint8_t>(cmd & 0xFF), 0x01};
 
   i2c_->clearLog();
   i2c_->beginJob();
