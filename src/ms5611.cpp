@@ -45,7 +45,14 @@ bool MS5611::init(I2C* _i2c)
   
   next_update_ms_ = millis();
   last_update_ms_ = millis();
-  
+
+  detect_present();
+
+  return baro_present_;
+}
+
+bool MS5611::detect_present()
+{
   // I'm not sure why this is required, but the barometer doesn't respond otherwise
   // It doesn't have to be 0x00 either, pretty much anything works in my experience
   i2c_->checkPresent(0x00);
@@ -84,12 +91,16 @@ bool MS5611::init(I2C* _i2c)
     new_data_ = false;
     baro_present_ = true;
     next_reboot_ms_ = REBOOT_PERIOD_MS;
-    return true;
+
+    next_update_ms_ = millis();
+    last_update_ms_ = millis();
   }
   else
   {
-    return false;
+    baro_present_ = false;
   }
+
+  return baro_present_;
 }
 
 bool MS5611::present()
@@ -110,8 +121,7 @@ void MS5611::update()
 
   if (!baro_present_)
   {
-      callback_type_ = CB_PRESENT;
-      i2c_->checkPresent(ADDR, &cb);
+    detect_present();
   }
   else
   {
@@ -249,7 +259,6 @@ void MS5611::convert()
 bool MS5611::start_temp_meas()
 {
   waiting_for_cb_ = true;
-  last_update_ms_ = millis();
   callback_type_ = CB_TEMP_START;
   return i2c_->write(ADDR, ADC_CONV | ADC_D2 | ADC_4096, &cb) == I2C::RESULT_SUCCESS;
 }
@@ -257,7 +266,6 @@ bool MS5611::start_temp_meas()
 bool MS5611::start_pres_meas()
 {
   waiting_for_cb_ = true;
-  last_update_ms_ = millis();
   callback_type_ = CB_PRES_START;
   return i2c_->write(ADDR, ADC_CONV | ADC_D1 | ADC_4096, &cb) == I2C::RESULT_SUCCESS;
 }
@@ -273,7 +281,6 @@ bool MS5611::read_adc(uint8_t* read_buf)
 bool MS5611::read_pres_meas()
 {
   waiting_for_cb_ = true;
-  last_update_ms_ = millis();
   callback_type_ = CB_PRES_READ;
 
   return read_adc(pres_buf_);
@@ -282,7 +289,6 @@ bool MS5611::read_pres_meas()
 bool MS5611::read_temp_meas()
 {
   waiting_for_cb_ = true;
-  last_update_ms_ = millis();
   callback_type_ = CB_TEMP_READ;
 
   return read_adc(temp_buf_);

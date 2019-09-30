@@ -104,6 +104,7 @@ private:
 
 public:
   bool init(I2C* _i2c);
+  bool detect_present();
   void update();
   void read(float *press, float *temp);
   bool present();
