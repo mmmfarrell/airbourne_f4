@@ -87,13 +87,15 @@ int main() {
              static_cast<int32_t>(pressure),
              static_cast<int32_t>(temperature),
              static_cast<int32_t>(temperature*100)%100);
-      
-      delay(10);
     }
     else
     {
       warn.on();
-      printf("error ");
+      // printf("error ");
+      printf("%d Pa, %d.%d K, ",
+             static_cast<int32_t>(0),
+             static_cast<int32_t>(0),
+             static_cast<int32_t>(0)%100);
     }
 
     laser.update();
@@ -103,12 +105,17 @@ int main() {
              static_cast<int>(laser.distance()),
              static_cast<int>(laser.distance()*1000)%1000,
              laser.strength());
-      delay(10);
     }
     else
     {
       warn.on();
-      printf("error\n");
+      // printf("error\n");
+      printf("dist: %d.%d, strength: %d\n",
+             static_cast<int>(0),
+             static_cast<int>(0),
+             0);
     }
+
+    delay(10);
   }
 }
